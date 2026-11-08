@@ -765,7 +765,9 @@
         <select id="bt"><option>360 Photo Booth</option><option>Mirror Photo Booth</option><option>Magazine Booth</option><option>Selfie Booth</option><option>Not sure — advise me</option></select>
       </div>
       <div class="field"><label for="ms">Anything else? (optional)</label><textarea id="ms" rows="2" placeholder="Venue, guest count, branding…"></textarea></div>
-      <button class="btn solid" onclick="submitDate()">Send my request <span class="arw">→</span></button>
+      <input type="checkbox" id="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p id="formErr" style="display:none;color:#ff8a8a;font-size:.86rem;margin:0 0 10px"></p>
+      <button class="btn solid" id="sendBtn" onclick="submitDate()">Send my request <span class="arw">→</span></button>
     </div>
     <div class="ok-msg" id="okMsg">
       <div class="tick">✓</div>
@@ -815,15 +817,46 @@
   function closeAll(){ document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open')); var v=document.getElementById('reelVid'); if(v) v.pause(); }
   document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) closeAll(); }));
   addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeAll(); toggleDrawer(false);} });
+  // Web3Forms — submissions email silently to Nufx360activations@gmail.com
+  var WEB3FORMS_KEY = "388b48c8-40f3-46b8-b5f8-781689f3af69";
   function submitDate(){
-    var g=id=>(document.getElementById(id).value||'').trim();
-    var pkgLine = selectedPkg ? ('Package: '+selectedPkg.service+' — '+selectedPkg.pkg+'%0D%0A') : '';
-    var body='New booking request from the website:%0D%0A%0D%0A'
-      +'Name: '+encodeURIComponent(g('nm'))+'%0D%0A'+'Phone/WhatsApp: '+encodeURIComponent(g('ph'))+'%0D%0A'
-      +'Event date: '+encodeURIComponent(g('dt'))+'%0D%0A'+'Event type: '+encodeURIComponent(g('ty'))+'%0D%0A'
-      +'Booth(s): '+encodeURIComponent(g('bt'))+'%0D%0A'+pkgLine+'Notes: '+encodeURIComponent(g('ms'));
-    window.location.href='mailto:Nufx360activations@gmail.com?subject='+encodeURIComponent('Booking request — '+(g('nm')||'Website')+' ('+g('dt')+')')+'&body='+body;
-    document.getElementById('dateForm').style.display='none'; document.getElementById('okMsg').classList.add('show');
+    var g=function(id){return (document.getElementById(id).value||'').trim();};
+    var err=document.getElementById('formErr');
+    err.style.display='none';
+    // basic validation
+    if(!g('nm') || !g('ph') || !g('dt')){
+      err.textContent='Please add your name, phone number and event date.';
+      err.style.display='block'; return;
+    }
+    var btn=document.getElementById('sendBtn');
+    btn.disabled=true; var btnHtml=btn.innerHTML; btn.innerHTML='Sending…';
+    var payload={
+      access_key: WEB3FORMS_KEY,
+      subject: 'New booking request — '+(g('nm')||'Website')+' ('+g('dt')+')',
+      from_name: 'NUFXphotobooths website',
+      "Name": g('nm'),
+      "Phone / WhatsApp": g('ph'),
+      "Event date": g('dt'),
+      "Event type": g('ty'),
+      "Booth(s)": g('bt'),
+      "Package": selectedPkg ? (selectedPkg.service+' — '+selectedPkg.pkg) : '—',
+      "Notes": g('ms') || '—',
+      botcheck: document.getElementById('botcheck').checked
+    };
+    fetch('https://api.web3forms.com/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload)
+    }).then(function(r){return r.json();}).then(function(data){
+      if(data && data.success){
+        document.getElementById('dateForm').style.display='none';
+        document.getElementById('okMsg').classList.add('show');
+      } else { throw new Error(data && data.message ? data.message : 'failed'); }
+    }).catch(function(){
+      btn.disabled=false; btn.innerHTML=btnHtml;
+      err.innerHTML='Sorry, that didn’t go through. Please message us on <a href="https://wa.me/2349059813823" style="color:var(--cyan)">WhatsApp</a> and we’ll sort your booking.';
+      err.style.display='block';
+    });
   }
   // hero showreel cycler — alternates the reels with a crossfade
   (function(){
