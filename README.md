@@ -1,5 +1,6 @@
+# NUFXphotobooths site
 
-## Update (Detty December)
-- Real NUFX Media logo in header + footer (assets/img/nufx_logo.png).
-- Top announcement bar links to the Mirror promo (openPricing('mirror')); dismissible.
-- Promo date shows "Nov 10 – Dec 5, 2026".
+## Update — Mirror cover collage
+Mirror Photo Booth cover in Core Services now shows a 3-photo collage:
+booth (major) + printer + keychains (support). Files: assets/img/svc_booth.webp,
+svc_printer.webp, svc_keychains.webp.

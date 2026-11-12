@@ -156,6 +156,12 @@
   .svc-media.photo{background:#0d0d0d}
   .svc-fill{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(26px) brightness(.55) saturate(1.15);transform:scale(1.25)}
   .svc-media .svc-photo{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;display:block}
+  /* mirror collage cover: booth major + printer/keychains support */
+  .svc-media.collage{display:grid;grid-template-columns:1.55fr 1fr;grid-template-rows:1fr 1fr;gap:8px;background:#0d0d0d}
+  .svc-media.collage .cmain{grid-row:1 / span 2;position:relative;overflow:hidden}
+  .svc-media.collage .cside{position:relative;overflow:hidden}
+  .svc-media.collage img{width:100%;height:100%;object-fit:cover;display:block}
+  .svc-media.collage .cmain img{object-position:60% center}
   .svc-media .tag{position:absolute;top:16px;left:16px;background:rgba(13,13,13,.72);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-family:var(--head);font-weight:600;font-size:.78rem;color:var(--cyan);z-index:2}
   .svc-txt ul{list-style:none;padding:0;margin:16px 0 24px}
   .svc-txt li{padding-left:26px;position:relative;margin-bottom:8px}
@@ -462,7 +468,12 @@
     </div>
 
     <div class="svc-row reveal">
-      <div class="svc-media photo"><div class="svc-fill" style="background-image:url('assets/img/svc_mirror.webp')"></div><img class="svc-photo" src="assets/img/svc_mirror.webp" alt="NUFX interactive mirror photo booth"><span class="tag">Guest favourite</span></div>
+      <div class="svc-media collage">
+        <div class="cmain"><img src="assets/img/svc_booth.webp" alt="NUFX interactive mirror photo booth"></div>
+        <div class="cside"><img src="assets/img/svc_printer.webp" alt="Instant prints"></div>
+        <div class="cside"><img src="assets/img/svc_keychains.webp" alt="Leather keychains"></div>
+        <span class="tag">Guest favourite</span>
+      </div>
       <div class="svc-txt">
         <h3>Mirror Photo Booth</h3>
         <p>A full-length interactive mirror that talks, animates and prints. Guests sign the screen and walk away with a photo in seconds.</p>
